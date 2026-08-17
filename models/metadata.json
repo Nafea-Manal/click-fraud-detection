@@ -1,0 +1,51 @@
+{
+  "best_model_name": "XGBoost",
+  "final_uses_scaler": false,
+  "model_features": [
+    "hour",
+    "day",
+    "minute",
+    "second",
+    "day_of_week",
+    "is_night",
+    "ip_click_count",
+    "ip_hour_click_count",
+    "ip_app_channel_count",
+    "time_since_prev_click",
+    "is_rapid_click",
+    "unique_apps_per_ip",
+    "unique_channels_per_ip",
+    "unique_devices_per_ip",
+    "unique_os_per_ip",
+    "app_conversion_rate",
+    "channel_conversion_rate",
+    "os_conversion_rate",
+    "is_anomaly_iso",
+    "anomaly_score_iso"
+  ],
+  "anomaly_features": [
+    "hour",
+    "day_of_week",
+    "is_night",
+    "ip_click_count",
+    "ip_hour_click_count",
+    "ip_app_channel_count",
+    "time_since_prev_click",
+    "is_rapid_click",
+    "unique_apps_per_ip",
+    "unique_channels_per_ip",
+    "unique_devices_per_ip",
+    "unique_os_per_ip"
+  ],
+  "risk_formula": "0.6 * normalized_anomaly_score + 0.4 * (1 - conversion_probability)",
+  "thresholds": {
+    "allow": "risk_score < 0.4",
+    "monitor": "0.4 <= risk_score < 0.7",
+    "block": "risk_score >= 0.7"
+  },
+  "business_assumptions": {
+    "cost_per_click": 0.05,
+    "revenue_per_conversion": 5.0
+  },
+  "xgb_error": null
+}
