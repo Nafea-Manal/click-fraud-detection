@@ -48,11 +48,10 @@ Desktop.ini
 *.njsproj
 *.sln
 
-# ---------- Logs ----------
 logs/
-<<<<<<< HEAD
+
 *.log
 .streamlit/secrets.toml
-=======
+
 *.log
->>>>>>> origin/main
+
