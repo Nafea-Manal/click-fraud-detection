@@ -50,4 +50,9 @@ Desktop.ini
 
 # ---------- Logs ----------
 logs/
+<<<<<<< HEAD
 *.log
+.streamlit/secrets.toml
+=======
+*.log
+>>>>>>> origin/main
