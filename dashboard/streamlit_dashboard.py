@@ -23,7 +23,7 @@ try:
     # On essaie de récupérer les données
     df = conn.query(
         "SELECT * FROM scored_clicks ORDER BY id DESC", 
-        ttl="10m" # Met en cache les données pendant 10 minutes pour la performance
+        ttl="1m" # Met en cache les données pendant 10 minutes pour la performance
     )
     
 except Exception as e:
