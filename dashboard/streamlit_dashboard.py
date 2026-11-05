@@ -1,31 +1,20 @@
 import pandas as pd
 import streamlit as st
 import plotly.express as px
-<<<<<<< HEAD
 from streamlit_autorefresh import st_autorefresh
 
-=======
-import sqlite3
-from streamlit_autorefresh import st_autorefresh
-
-
->>>>>>> origin/main
 st.set_page_config(
     page_title="Click Fraud Dashboard",
     layout="wide"
 )
 
-<<<<<<< HEAD
 # Auto-refresh toutes les 3 secondes (pour voir les nouveaux clics en direct)
-=======
->>>>>>> origin/main
 st_autorefresh(interval=3000, key="dashboard_refresh")
 
 st.title("Dashboard — Détection de clics suspects")
 
 ROI_PATH = "tables/roi_summary.csv"
 
-<<<<<<< HEAD
 # --- CONNEXION À POSTGRESQL (NEON) ---
 # On utilise st.connection qui lit automatiquement les infos depuis secrets.toml
 try:
@@ -55,22 +44,6 @@ if df.empty:
     st.stop() # On arrête l'exécution ici si pas de données
 
 # --- À PARTIR D'ICI, TON CODE ORIGINAL CONTINUE ---
-=======
-
-DB_PATH = "click_logs.db"
-
-conn = sqlite3.connect(DB_PATH)
-df = pd.read_sql_query(
-    "SELECT * FROM scored_clicks ORDER BY id DESC",
-    conn
-)
-conn.close()
-
-if df.empty:
-    st.warning("Aucun clic enregistré pour le moment. Clique sur le website pour générer des données.")
-    st.stop()
-
->>>>>>> origin/main
 
 st.subheader("Aperçu des données scorées")
 st.dataframe(df.head(20), use_container_width=True)
@@ -121,7 +94,6 @@ fig_ip = px.bar(
 )
 st.plotly_chart(fig_ip, use_container_width=True)
 
-<<<<<<< HEAD
 # --- ANALYSE ROI ---
 st.subheader("Analyse ROI avant/après filtrage")
 
@@ -173,51 +145,3 @@ try:
     
 except Exception as e:
     st.error(f"Erreur lors de la lecture du fichier ROI : {e}")
-=======
-st.subheader("Analyse ROI avant/après filtrage")
-
-roi_df = pd.read_csv(ROI_PATH)
-st.dataframe(roi_df, use_container_width=True)
-
-before = roi_df[roi_df["scenario"] == "before_filtering"].iloc[0]
-after = roi_df[roi_df["scenario"] == "after_filtering"].iloc[0]
-
-roi_df["roi_percent"] = roi_df["roi"] * 100
-
-fig_roi = px.bar(
-    roi_df,
-    x="scenario",
-    y="roi_percent",
-    title="ROI avant/après filtrage (%)",
-    text="roi_percent"
-)
-
-fig_roi.update_traces(
-    texttemplate="%{text:.2f}%",
-    textposition="outside"
-)
-
-fig_roi.update_layout(
-    yaxis_title="ROI (%)",
-    xaxis_title="Scénario"
-)
-
-st.plotly_chart(fig_roi, use_container_width=True)
-
-roi_improvement = (after["roi"] - before["roi"]) * 100
-cost_saving = before["cost"] - after["cost"]
-clicks_removed = before["clicks"] - after["clicks"]
-conversions_lost = before["conversions"] - after["conversions"]
-
-col4, col5, col6, col7 = st.columns(4)
-
-col4.metric("Coût avant filtrage", round(before["cost"], 2))
-col5.metric("Coût après filtrage", round(after["cost"], 2))
-col6.metric("Économie estimée", round(cost_saving, 2))
-col7.metric("Amélioration du ROI", f"{roi_improvement:.2f} points")
-
-col8, col9 = st.columns(2)
-
-col8.metric("Clics supprimés", int(clicks_removed))
-col9.metric("Conversions perdues", int(conversions_lost))
->>>>>>> origin/main
