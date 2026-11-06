@@ -1,6 +1,5 @@
 
 # Détection de clics suspects & optimisation du ROI publicitaire
-
 > 🚀 **[Accéder au Dashboard en direct](https://click-fraud-mlops.streamlit.app)** 
 > 
 > Système web intelligent de détection de clics suspects dans les campagnes publicitaires digitales, construit selon la méthodologie **KDD** (Knowledge Discovery in Databases).
