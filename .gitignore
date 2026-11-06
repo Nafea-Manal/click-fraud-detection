@@ -1,0 +1,53 @@
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+build/
+dist-packages/
+.venv/
+venv/
+env/
+ENV/
+.python-version
+.ipynb_checkpoints/
+
+# ---------- Bases de données runtime ----------
+*.db
+*.db.bak*
+*.sqlite
+*.sqlite3
+
+# ---------- Node / Frontend ----------
+node_modules/
+frontend/node_modules/
+frontend/dist/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.local
+
+# ---------- OS ----------
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ---------- Environnement & secrets ----------
+.env
+.env.local
+.env.*.local
+
+# ---------- Éditeurs ----------
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# ---------- Logs ----------
+logs/
+*.log
