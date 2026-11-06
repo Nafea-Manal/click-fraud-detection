@@ -1,8 +1,4 @@
-Bien sûr ! Voici le **README complet et mis à jour** pour ta version 2 (Neon + Cloud). Tu peux tout copier-coller directement dans ton fichier `README.md` sur GitHub.
 
----
-
-```markdown
 # Détection de clics suspects & optimisation du ROI publicitaire
 
 > 🚀 **[Accéder au Dashboard en direct](https://click-fraud-mlops.streamlit.app)** 
