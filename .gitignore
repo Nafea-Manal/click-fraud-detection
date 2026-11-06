@@ -54,4 +54,4 @@ logs/
 .streamlit/secrets.toml
 
 *.log
-
+.env

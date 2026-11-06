@@ -20,3 +20,14 @@ psycopg[binary]
 
 streamlit-autorefresh==1.0.1
 
+asyncpg
+
+python-dotenv
+
+
+fastapi
+uvicorn
+asyncpg
+python-dotenv
+joblib
+scikit-learn
