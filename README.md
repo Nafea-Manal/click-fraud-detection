@@ -1,12 +1,20 @@
+Bien sûr ! Voici le **README complet et mis à jour** pour ta version 2 (Neon + Cloud). Tu peux tout copier-coller directement dans ton fichier `README.md` sur GitHub.
+
+---
+
+```markdown
 # Détection de clics suspects & optimisation du ROI publicitaire
 
+> 🚀 **[Accéder au Dashboard en direct](https://click-fraud-mlops.streamlit.app)** 
+> 
 > Système web intelligent de détection de clics suspects dans les campagnes publicitaires digitales, construit selon la méthodologie **KDD** (Knowledge Discovery in Databases).
 
 ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)
 ![Machine Learning](https://img.shields.io/badge/ML-XGBoost%20%7C%20Isolation%20Forest-FF6F00)
 ![Backend](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi)
+![Database](https://img.shields.io/badge/Database-PostgreSQL%20(Neon)-336791?logo=postgresql)
 ![Frontend](https://img.shields.io/badge/Frontend-React%20%2B%20TypeScript-61DAFB?logo=react)
-![Dashboard](https://img.shields.io/badge/Dashboard-Streamlit-FF4B4B?logo=streamlit)
+![Dashboard](https://img.shields.io/badge/Dashboard-Streamlit%20Cloud-FF4B4B?logo=streamlit)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ---
@@ -19,11 +27,10 @@
 4. [Structure du projet](#structure-du-projet)
 5. [Méthodologie](#méthodologie)
 6. [Résultats](#résultats)
-7. [Prérequis](#prérequis)
-8. [Installation](#installation)
-9. [Exécution](#exécution)
-10. [Documentation](#documentation)
-11. [Licence](#licence)
+7. [Installation](#installation)
+8. [Exécution](#exécution)
+9. [Documentation](#documentation)
+10. [Licence](#licence)
 
 ---
 
@@ -32,24 +39,26 @@
 Dans la publicité digitale, les annonceurs paient souvent **au clic** (CPC). Les clics frauduleux ou de faible qualité gonflent artificiellement les dépenses, faussent les KPI et réduisent le **ROI** des campagnes.
 
 Ce projet propose un **système complet** qui :
-
 - applique la méthodologie **KDD** sur le dataset [TalkingData AdTracking Fraud Detection](https://www.kaggle.com/c/talkingdata-adtracking-fraud-detection) ;
 - construit des **features comportementales** (volume, diversité, rapidité, taux de conversion historiques) ;
 - détecte les anomalies en **non supervisé** (Isolation Forest) ;
 - entraîne des **modèles supervisés** (Logistic Regression, Random Forest, XGBoost) ;
 - calcule un **score de risque** combiné utilisable en temps réel ;
 - estime l'**impact du filtrage sur le ROI** ;
-- expose le tout via une **API FastAPI**, un **dashboard Streamlit** et un **frontend React**.
+- expose le tout via une **API FastAPI**, une **base de données PostgreSQL (Neon)**, un **dashboard Streamlit** et un **frontend React**.
 
 ## Fonctionnalités
 
 - **Scoring en temps réel** d'un clic ou par lot (`/score-click`, `/score-batch`)
 - **3 niveaux de décision** : `allow` / `monitor` / `block` selon le score de risque
-- **Dashboard temps réel** (Streamlit) : métriques, distributions, top IP suspectes, analyse ROI
+- **Dashboard temps réel** (Streamlit Cloud) : métriques, distributions, top IP suspectes, analyse ROI
 - **Simulation web** (React) : clics normaux vs suspects, visualisation immédiate du score
 - **Analyse ROI** avant / après filtrage
+- **Base de données persistante** (PostgreSQL) pour stocker l'historique des clics scorés.
 
 ## Architecture
+
+Le projet a évolué d'une version locale (SQLite) vers une architecture cloud professionnelle.
 
 ```text
 Dataset TalkingData
@@ -58,29 +67,31 @@ Dataset TalkingData
 Notebook KDD (exploration, prétraitement, features)
         │  exports modèles .pkl + metadata.json
         ▼
-API FastAPI (port 8000)  ──► SQLite (click_logs.db)
-        │
-   ┌────┴────┐
-   ▼         ▼
-Frontend    Dashboard
-React       Streamlit
-(5173)      (8501)
+API FastAPI (Local)  ──── écrit ────►  Base PostgreSQL (Neon Cloud)
+        │                                        │
+        │                                        │
+        ▼                                        ▼
+Modèle XGBoost                        Dashboard Streamlit (Cloud)
+        │                                        │
+        └────────────── lit ────────────────────┘
 ```
 
-| Service | Technologie | Port | Rôle |
-|---------|-------------|------|------|
-| API | FastAPI + Uvicorn | 8000 | Scoring des clics en temps réel |
-| Dashboard | Streamlit | 8501 | Visualisation des données et ROI |
-| Frontend | React + Vite | 5173 | Interface web de simulation |
+| Service | Technologie | Rôle |
+|---------|-------------|------|
+| API | FastAPI + Uvicorn | Scoring des clics en temps réel |
+| Base de données | PostgreSQL (Neon) | Stockage persistant des clics scorés |
+| Dashboard | Streamlit (Cloud) | Visualisation des données et ROI |
+| Frontend | React + Vite | Interface web de simulation |
 
 ## Structure du projet
 
 ```text
 .
-├── data/                  # Dataset (placeholder — voir note ci-dessous)
+├── .streamlit/            # Configuration Streamlit (secrets)
+├── data/                  # Dataset (placeholder)
 ├── notebooks/             # Notebook KDD (entraînement des modèles)
 ├── src/                   # Code source : API, features, prétraitement, entraînement
-│   ├── realtime_api.py    # API FastAPI
+│   ├── realtime_api.py    # API FastAPI (connectée à Neon)
 │   ├── feature_engineering.py
 │   ├── preprocessing.py
 │   ├── train_model.py
@@ -98,8 +109,6 @@ React       Streamlit
     └── guide_windows.md   # Guide d'installation Windows
 ```
 
-> **Note dataset** : le fichier `data/click_fraud_dataset.csv` est un placeholder. Le dataset TalkingData complet (~200 Mo d'échantillon) est disponible sur [Kaggle](https://www.kaggle.com/c/talkingdata-adtracking-fraud-detection/data) et doit être téléchargé séparément pour ré-entraîner les modèles.
-
 ## Méthodologie
 
 Le projet suit les 5 étapes de la méthodologie **KDD** :
@@ -108,7 +117,7 @@ Le projet suit les 5 étapes de la méthodologie **KDD** :
 2. **Data Understanding** — dataset déséquilibré (99.83 % non convertis), 500 000 lignes
 3. **Data Preparation** — nettoyage, features temporelles et comportementales
 4. **Modeling** — 3 modèles comparés, XGBoost retenu (meilleure PR-AUC)
-5. **Evaluation & Deployment** — score de risque, analyse ROI, déploiement FastAPI
+5. **Evaluation & Deployment** — score de risque, analyse ROI, déploiement FastAPI + Neon + Streamlit
 
 ## Résultats
 
@@ -131,48 +140,49 @@ XGBoost est choisi comme modèle final car il obtient la **meilleure PR-AUC**, m
 
 Économie estimée : **699.40 €**, pour seulement 6 conversions perdues (3.5 %).
 
-## Prérequis
-
-- **Python 3.11+**
-- **Node.js 18+** (pour le frontend React)
-- Les modèles pré-entraînés sont fournis dans `models/`
-
 ## Installation
 
-### Backend
+### Backend & Base de données
 
-```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1        # Windows
-# source .venv/bin/activate       # Linux / macOS
+1. **Cloner le dépôt** et créer un environnement virtuel :
+   ```powershell
+   python -m venv .venv
+   .venv\Scripts\Activate.ps1        # Windows
+   # source .venv/bin/activate       # Linux / macOS
+   pip install -r requirements.txt
+   ```
 
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-```
+2. **Configuration de la base de données (Neon)** :
+   - Créez un compte gratuit sur [Neon](https://neon.tech) et un projet PostgreSQL.
+   - Copiez la chaîne de connexion fournie.
+   - Créez un fichier `.env` à la racine du projet :
+     ```env
+     DATABASE_URL="postgresql://neondb_owner:VOTRE_MOT_DE_PASSE@ep-xxx.neon.tech/neondb?sslmode=require"
+     ```
+   - *(Ce fichier est ignoré par Git pour des raisons de sécurité).*
 
-### Frontend
+### Frontend (optionnel)
 
 ```powershell
 cd frontend
 npm install
 ```
 
-> ⚠️ Sur Windows, si une erreur de politique d'exécution apparaît :
-> `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`
-
 ## Exécution
 
 ### 1. API FastAPI (Terminal 1)
 
 ```powershell
-uvicorn src.realtime_api:app --reload --port 8000
+python -m uvicorn src.realtime_api:app --reload --port 8000
 ```
+*(L'API se connecte automatiquement à Neon via le fichier `.env`).*
 
 ### 2. Dashboard Streamlit (Terminal 2)
 
 ```powershell
 streamlit run dashboard/streamlit_dashboard.py
 ```
+*(Ou utilisez directement la version en ligne : [Dashboard en direct](https://click-fraud-mlops.streamlit.app))*
 
 ### 3. Frontend React (Terminal 3)
 
@@ -181,20 +191,13 @@ cd frontend
 npm run dev
 ```
 
-### 4. Page HTML de test (optionnel)
-
-```powershell
-python -m http.server 8080 -d web
-```
-
 ### Accès
 
 | Service | URL |
 |---------|-----|
 | API FastAPI | http://127.0.0.1:8000 |
-| Dashboard Streamlit | http://localhost:8501 |
+| Dashboard Streamlit (Cloud) | https://click-fraud-mlops.streamlit.app |
 | Frontend React | http://localhost:5173 |
-| Page HTML | http://localhost:8080 |
 
 ### Exemple d'appel API
 
@@ -212,3 +215,16 @@ curl -X POST http://127.0.0.1:8000/score-click \
 ## Licence
 
 Ce projet est sous licence [MIT](LICENSE).
+```
+
+---
+
+### 🚀 Ce que tu dois faire maintenant :
+
+1.  Va sur **GitHub** > ton fichier `README.md` sur la branche `main`.
+2.  Clique sur le **crayon** (Edit).
+3.  **Sélectionne tout** (`Ctrl + A`) et **supprime**.
+4.  **Colle** le contenu ci-dessus.
+5.  Descends en bas, mets un message de commit (ex: `"Mise à jour README v2 (Neon/Cloud)"`) et clique sur **"Commit changes"**.
+
+Une fois que c'est fait, dis-le-moi, et on passera à la finalisation de la **version 1 (SQLite)** sur la branche `v1-sqlite`.
