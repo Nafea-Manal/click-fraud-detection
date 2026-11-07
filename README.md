@@ -1,8 +1,3 @@
-Bien sûr ! Voici le **README complet et mis à jour** pour ta version 2 (Neon + Cloud). Tu peux tout copier-coller directement dans ton fichier `README.md` sur GitHub.
-
----
-
-```markdown
 # Détection de clics suspects & optimisation du ROI publicitaire
 
 > 🚀 **[Accéder au Dashboard en direct](https://click-fraud-mlops.streamlit.app)** 
@@ -15,7 +10,26 @@ Bien sûr ! Voici le **README complet et mis à jour** pour ta version 2 (Neon +
 ![Database](https://img.shields.io/badge/Database-PostgreSQL%20(Neon)-336791?logo=postgresql)
 ![Frontend](https://img.shields.io/badge/Frontend-React%20%2B%20TypeScript-61DAFB?logo=react)
 ![Dashboard](https://img.shields.io/badge/Dashboard-Streamlit%20Cloud-FF4B4B?logo=streamlit)
+![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?logo=docker&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green)
+
+---
+
+## 🚀 Comment tester le projet ? (3 options)
+
+### Option 1 : La plus rapide (Aucune installation)
+👉 **[Cliquez ici pour voir le Dashboard en direct](https://click-fraud-mlops.streamlit.app)**
+*(Le dashboard est hébergé sur Streamlit Cloud et connecté à une base de données PostgreSQL sur Neon. Aucune installation n'est nécessaire).*
+
+### Option 2 : Avec Docker (Recommandé pour les développeurs)
+Si vous avez [Docker](https://www.docker.com/) installé, lancez tout le projet (API + Base de données) en une seule commande :
+```bash
+docker compose up --build
+```
+L'API sera accessible sur `http://localhost:8000/docs`.
+
+### Option 3 : Installation manuelle (Pour comprendre le code)
+Voir la section [Installation](#installation) ci-dessous.
 
 ---
 
@@ -29,7 +43,7 @@ Bien sûr ! Voici le **README complet et mis à jour** pour ta version 2 (Neon +
 6. [Résultats](#résultats)
 7. [Installation](#installation)
 8. [Exécution](#exécution)
-9. [Documentation](#documentation)
+9. [Versions du projet](#versions-du-projet)
 10. [Licence](#licence)
 
 ---
@@ -55,6 +69,7 @@ Ce projet propose un **système complet** qui :
 - **Simulation web** (React) : clics normaux vs suspects, visualisation immédiate du score
 - **Analyse ROI** avant / après filtrage
 - **Base de données persistante** (PostgreSQL) pour stocker l'historique des clics scorés.
+- **Containerisation Docker** pour un déploiement facile.
 
 ## Architecture
 
@@ -104,9 +119,10 @@ Modèle XGBoost                        Dashboard Streamlit (Cloud)
 ├── figures/               # Graphiques générés
 ├── tables/                # Tableaux de résultats (CSV / JSON)
 ├── outputs/               # Rapport final PDF + exports
-└── docs/                  # Documentation détaillée
-    ├── methodologie.md    # Rapport méthodologique complet
-    └── guide_windows.md   # Guide d'installation Windows
+├── docs/                  # Documentation détaillée
+├── Dockerfile             # Image Docker pour l'API
+├── docker-compose.yml     # Orchestration API + PostgreSQL local
+└── requirements.txt       # Dépendances Python
 ```
 
 ## Méthodologie
@@ -142,27 +158,24 @@ XGBoost est choisi comme modèle final car il obtient la **meilleure PR-AUC**, m
 
 ## Installation
 
-### Backend & Base de données
-
-1. **Cloner le dépôt** et créer un environnement virtuel :
-   ```powershell
-   python -m venv .venv
-   .venv\Scripts\Activate.ps1        # Windows
-   # source .venv/bin/activate       # Linux / macOS
-   pip install -r requirements.txt
+### 1. Configuration de la base de données (Neon)
+1. Créez un compte gratuit sur [Neon](https://neon.tech) et un projet PostgreSQL.
+2. Copiez la chaîne de connexion fournie.
+3. Créez un fichier `.env` à la racine du projet :
+   ```env
+   DATABASE_URL="postgresql://neondb_owner:VOTRE_MOT_DE_PASSE@ep-xxx.neon.tech/neondb?sslmode=require"
    ```
+   *(Ce fichier est ignoré par Git pour des raisons de sécurité).*
 
-2. **Configuration de la base de données (Neon)** :
-   - Créez un compte gratuit sur [Neon](https://neon.tech) et un projet PostgreSQL.
-   - Copiez la chaîne de connexion fournie.
-   - Créez un fichier `.env` à la racine du projet :
-     ```env
-     DATABASE_URL="postgresql://neondb_owner:VOTRE_MOT_DE_PASSE@ep-xxx.neon.tech/neondb?sslmode=require"
-     ```
-   - *(Ce fichier est ignoré par Git pour des raisons de sécurité).*
+### 2. Backend & Dashboard
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1        # Windows
+# source venv/bin/activate       # Linux / macOS
+pip install -r requirements.txt
+```
 
-### Frontend (optionnel)
-
+### 3. Frontend (optionnel)
 ```powershell
 cd frontend
 npm install
@@ -171,21 +184,18 @@ npm install
 ## Exécution
 
 ### 1. API FastAPI (Terminal 1)
-
 ```powershell
 python -m uvicorn src.realtime_api:app --reload --port 8000
 ```
 *(L'API se connecte automatiquement à Neon via le fichier `.env`).*
 
 ### 2. Dashboard Streamlit (Terminal 2)
-
 ```powershell
-streamlit run dashboard/streamlit_dashboard.py
+python -m streamlit run dashboard/streamlit_dashboard.py
 ```
 *(Ou utilisez directement la version en ligne : [Dashboard en direct](https://click-fraud-mlops.streamlit.app))*
 
 ### 3. Frontend React (Terminal 3)
-
 ```powershell
 cd frontend
 npm run dev
@@ -200,17 +210,22 @@ npm run dev
 | Frontend React | http://localhost:5173 |
 
 ### Exemple d'appel API
-
 ```bash
 curl -X POST http://127.0.0.1:8000/score-click \
   -H "Content-Type: application/json" \
   -d '{"ip": 17357, "app": 12, "device": 1, "os": 19, "channel": 245, "click_time": "2026-07-05 14:32:21"}'
 ```
 
-## Documentation
+## Versions du projet
 
-- [docs/methodologie.md](docs/methodologie.md) — rapport méthodologique complet (KDD, features, modèles, score de risque, ROI, questions de soutenance)
-- [docs/guide_windows.md](docs/guide_windows.md) — guide d'installation et d'exécution détaillé (Windows)
+Ce projet a évolué d'une architecture locale vers une architecture cloud.
+
+- **Version 2.0 (Actuelle - Branche `main`)** : Architecture cloud avec **PostgreSQL (Neon)** et **Streamlit Cloud**. C'est la version recommandée pour la démonstration en ligne.
+- **Version 1.0 (Historique - Branche `v1-sqlite`)** : Architecture locale avec **SQLite**. Idéale pour tester le projet rapidement sans configuration de base de données.
+
+### Les deux interfaces
+1. **Dashboard Streamlit (Cloud)** : Déployé sur Streamlit Cloud, il permet de visualiser les données (graphiques, ROI) et est accessible en ligne.
+2. **Frontend React (Local)** : Une interface interactive pour simuler des clics en temps réel et voir le score de risque s'afficher immédiatement.
 
 ## Licence
 
@@ -219,12 +234,12 @@ Ce projet est sous licence [MIT](LICENSE).
 
 ---
 
-### 🚀 Ce que tu dois faire maintenant :
+### 🚀 Ce que tu dois faire maintenant
 
 1.  Va sur **GitHub** > ton fichier `README.md` sur la branche `main`.
 2.  Clique sur le **crayon** (Edit).
 3.  **Sélectionne tout** (`Ctrl + A`) et **supprime**.
 4.  **Colle** le contenu ci-dessus.
-5.  Descends en bas, mets un message de commit (ex: `"Mise à jour README v2 (Neon/Cloud)"`) et clique sur **"Commit changes"**.
+5.  Descends en bas, mets un message de commit (ex: `"README final avec options de test Docker et Cloud"`) et clique sur **"Commit changes"**.
 
-Une fois que c'est fait, dis-le-moi, et on passera à la finalisation de la **version 1 (SQLite)** sur la branche `v1-sqlite`.
+Une fois que c'est fait, dis-le-moi. On pourra passer à la **finalisation de la version 1 (SQLite)** sur la branche `v1-sqlite`.
