@@ -1,3 +1,4 @@
+![CI](https://github.com/Nafea-Manal/click-fraud-detection/actions/workflows/ci.yml/badge.svg)
 # Détection de clics suspects & optimisation du ROI publicitaire
 
 > 🚀 **[Accéder au Dashboard en direct](https://click-fraud-mlops.streamlit.app)**
